@@ -1,25 +1,33 @@
 import { Component } from '@angular/core';
 import { Task } from '../../app/models/task.model';
-import { resetFakeAsyncZone } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
+import { AddTaskComponent } from '../add-task/add-task.component';
+import { TaskService } from '../../app/services/task.service';
 
 @Component({
   selector: 'app-task-list',
-  imports: [CommonModule],
   templateUrl: './task-list.component.html',
-  styleUrl: './task-list.component.scss'
+  styleUrls: ['./task-list.component.css'],
+  imports: [CommonModule, AddTaskComponent]
 })
 export class TaskListComponent {
-  tasks: Task[] = [
-    {id: 1, title: "Изучить Ангуляр", completed: false},
-    {id: 2, title: "Создать to-do list", completed: false}
-  ]
+  tasks: Task[] = [];
 
-  toggleTaskCompleted(task: Task) {
-    task.completed = !task.completed;
+  constructor(private taskService: TaskService) {}
+
+  ngOnInit() {
+    this.tasks = this.taskService.getTasks();
+  }
+
+  toggleTaskCompletion(task: Task) {
+    this.taskService.toggleTaskCompletion(task);
   }
 
   deleteTask(task: Task) {
-    this.tasks = this.tasks.filter(t => t.id !== task.id);
+    this.taskService.deleteTask(task);
+  }
+
+  addTask(title: string) {
+    this.taskService.addTask(title);
   }
 }
